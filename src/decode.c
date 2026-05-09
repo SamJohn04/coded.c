@@ -1,18 +1,24 @@
 #include <stdio.h>
 
-void decode(FILE *);
+void decode(FILE*, FILE*);
 
 int main(int argc, char ** argv) {
-    FILE * fin;
+    FILE* fin;
+    FILE* fout;
     if (argc < 2) {
         fin = stdin;
+        fout = stdout;
+    } else if (argc == 2) {
+        fin = fopen(argv[1], "r");
+        fout = stdout;
     } else {
         fin = fopen(argv[1], "r");
+        fout = fopen(argv[2], "w");
     }
-    decode(fin);
+    decode(fin, fout);
 }
 
-void decode(FILE * fin) {
+void decode(FILE* fin, FILE* fout) {
     char ch;
     int i = 0, working;
 
@@ -23,11 +29,11 @@ void decode(FILE * fin) {
 
     while ((ch = fgetc(fin)) != EOF) {
         if (ch >= delete_character) {
-            putchar(ch);
+            fputc(ch, fout);
             continue;
         }
         if (ch < first_visible_character) {
-            putchar(ch);
+            fputc(ch, fout);
             continue;
         }
 
@@ -38,7 +44,7 @@ void decode(FILE * fin) {
             ch = working;
         }
 
-        putchar(ch);
+        fputc(ch, fout);
 
         i++;
         if (i >= maximum_index_value) {
